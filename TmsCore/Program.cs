@@ -79,3 +79,30 @@ catch (ArgumentException ex)
 Console.WriteLine($"Caught: {ex.Message}");
 }
 
+var s = new Student { Id = "S1", Name = "Abeba", Age = 20, GPA = 3.8m }; 
+Console.WriteLine($"Student: {s.Name}, GPA: {s.GPA}");
+
+// These should throw — try each one:
+// new Student { Id = "S2", Name = "", Age = 20, GPA = 3.0m };
+
+// new Student { Id = "S3", Name = "Test", Age = 12, GPA = 3.0m };
+
+// new Student { Id = "S4", Name = "Test", Age = 20, GPA = 5.0m };
+
+
+void PrintGradeReport(IEnumerable<IGradable> assessments)
+{
+Console.WriteLine("--- Grade Report ---");
+foreach (var item in assessments)
+{
+Console.WriteLine($"{item.Title}: {item.CalculateGrade():F2}%");
+}
+}
+
+// Test it — one array holds two completely different types
+IGradable[] cohortAssessments = [
+new Quiz { Title = "C# Basics", CorrectAnswers = 18, TotalQuestions = 20 },
+new LabAssignment { Title = "Registration API", FunctionalityScore = 90m, CodeQualityScore = 85m }
+];
+
+PrintGradeReport(cohortAssessments);
