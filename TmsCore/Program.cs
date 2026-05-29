@@ -49,10 +49,33 @@ Console.WriteLine(enrollment);
 
 // Non-destructive copy — creates a NEW record with one field changed
  
-var corrected = enrollment with { CourseCode = "CS-402" }; Console.WriteLine(corrected);
+// var corrected = enrollment with { CourseCode = "CS-402" }; Console.WriteLine(corrected);
 
-// Value equality — two records with the same data are equal
-var duplicate = new EnrollmentRecord("STU-001", "CS-401", enrollment.EnrolledAt); 
-Console.WriteLine($"Same data? {enrollment == duplicate}"); // True
+// // Value equality — two records with the same data are equal
+// var duplicate = new EnrollmentRecord("STU-001", "CS-401", enrollment.EnrolledAt); 
+// Console.WriteLine($"Same data? {enrollment == duplicate}"); // True
 
+
+
+var course = new Course { Code = "CS-401", Title = "Advanced C#", Capacity = 30 }; Console.WriteLine($"Course: {course.Title} (Capacity: {course.Capacity})");
+
+// Invalid capacity — should throw
+try
+{
+course.Capacity = -5;
+}
+catch (ArgumentOutOfRangeException ex)
+{
+Console.WriteLine($"Caught: {ex.Message}");
+}
+
+// Invalid title — should throw
+try
+{
+course.Title = "";
+}
+catch (ArgumentException ex)
+{
+Console.WriteLine($"Caught: {ex.Message}");
+}
 
