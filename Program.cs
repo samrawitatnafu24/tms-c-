@@ -42,6 +42,10 @@
 // Console.WriteLine($"Total allocated (decimal): {totalAllocation}"); 
 // Console.WriteLine($"Total allocated (formatted): {totalAllocation:F2}");
 
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
 internal static partial class Program
 {
     private static void Main()
@@ -82,29 +86,60 @@ internal static partial class Program
             Console.WriteLine($"Caught: {ex.Message}");
         }
 
-        var s = new Student { Id = "S1", Name = "Abeba", Age = 20, GPA = 3.8m };
-        Console.WriteLine($"Student: {s.Name}, GPA: {s.GPA}");
-
-        // These should throw — try each one:
-        // new Student { Id = "S2", Name = "", Age = 20, GPA = 3.0m };
-        // new Student { Id = "S3", Name = "Test", Age = 12, GPA = 3.0m };
-        // new Student { Id = "S4", Name = "Test", Age = 20, GPA = 5.0m };
-
-        // Test it — one array holds two completely different types
-        IGradable[] cohortAssessments = [
-            new Quiz { Title = "C# Basics", CorrectAnswers = 18, TotalQuestions = 20 },
-            new LabAssignment { Title = "Registration API", FunctionalityScore = 90m, CodeQualityScore = 85m }
+        // C# 12+ Collection Expressions the modern way to initialize lists
+        List<Student> students = [
+        new Student { Id = "S1", Name = "Abeba", Age = 22, GPA = 3.8m }, 
+        new Student { Id = "S2", Name = "Kidane", Age = 21, GPA = 2.4m }, 
+        new Student { Id = "S3", Name = "Dawit", Age = 20, GPA = 3.1m },
+         new Student { Id = "S4", Name = "Sara", Age = 23, GPA = 3.9m },
+          new Student { Id = "S5", Name = "Frehiwot", Age = 19, GPA = 2.0m },
+           new Student { Id = "S6", Name = "Yonas", Age = 24, GPA = 3.5m },
+            new Student { Id = "S7", Name = "Meron", Age = 22, GPA = 1.8m },
+             new Student { Id = "S8", Name = "Tesfaye", Age = 21, GPA = 2.9m }
         ];
+        // Build leaderboard: honors students (GPA >= 3.5), ordered by GPA desc, projected to names
+        var leaderboard = students
+            .Where(s => s.GPA >= 3.5m)
+            .OrderByDescending(s => s.GPA)
+            .Select(s => s.Name)
+            .ToList();
 
-        PrintGradeReport(cohortAssessments);
-    }
-
-    private static void PrintGradeReport(IGradable[] assessments)
-    {
-        Console.WriteLine("Grade Report:");
-        foreach (var assessment in assessments)
+        Console.WriteLine($"Found {leaderboard.Count} Honors Students:");
+        foreach (var name in leaderboard)
         {
-            Console.WriteLine(assessment);
+            Console.WriteLine($"- {name}");
         }
+
+        // Average GPA
+        decimal averageGpa = students.Average(s => s.GPA);
+        Console.WriteLine($"\nClass Average GPA: {averageGpa:F2}");
+
+        // Group by academic standing
+        var standingGroups = students.GroupBy(s => s.GPA switch
+        {
+            >= 3.5m => "Honors",
+            >= 2.5m => "Good Standing",
+            >= 2.0m => "Probation",
+            _ => "Academic Warning"
+        });
+
+        Console.WriteLine("\n--- Academic Standing Report ---");
+        foreach (var group in standingGroups)
+        {
+            Console.WriteLine($"\n{group.Key} ({group.Count()}):");
+            foreach (var s in group)
+            {
+                Console.WriteLine($" {s.Name} GPA: {s.GPA}");
+            }
+        }
+
+        // Collection expressions with spread (C# 12+)
+        string[] backendCourses = ["C#", "ASP.NET Core"]; 
+        string[] frontendCourses = ["TypeScript", "Angular"]; 
+        string[] allCourses = [..backendCourses, ..frontendCourses];
+        Console.WriteLine($"\nFull curriculum: {string.Join(", ", allCourses)}");
     }
 }
+
+
+
