@@ -32,3 +32,4 @@ public class EnrollmentService
         return new EnrollmentRecord(student.Id, course.Code, DateTime.UtcNow);
     }
 }
+
