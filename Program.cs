@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 // Console.WriteLine("Hello, World!");
 
-
 // EXERCISE 1
+ Console.WriteLine("\n ============================================================================");
+ Console.WriteLine(" EXERCISE 1: NULL HANDLING & STRING INTERPOLATION");
+ Console.WriteLine(" ============================================================================");
 
 // This is how the legacy system declared region — no indication it could be empty string region = null; // ⚠Compiler warning CS8600 
 // Console.WriteLine(region.ToUpper()); // ⚠Compiler warning CS8602
@@ -39,6 +41,9 @@ Console.WriteLine($"Courses: {enrollmentCount}");
 Console.WriteLine($"Campus: {campusRegion ?? "Not assigned"}");
 
 // EXERCISE 2
+Console.WriteLine("\n ============================================================================");
+ Console.WriteLine(" EXERCISE 2: FINANCIAL PRECISION");
+Console.WriteLine(" ============================================================================");
 
 // Legacy implementation — the bug that caused the audit failure
 double grantPerStudent = 1999.99;
@@ -53,13 +58,16 @@ double totalAllocation = grantPerStudent * 100_000;
 Console.WriteLine($"Total allocated (decimal): {totalAllocation}");
 Console.WriteLine($"Total allocated (formatted): {totalAllocation:F2}");
 
+// EXERCISE 3
+ Console.WriteLine("\n ============================================================================");
+ Console.WriteLine(" EXERCISE 3: Pipeline & Encapsulation Testing");
+ Console.WriteLine(" ============================================================================");
+
+Console.WriteLine("--- Exercise 3 - Part 1: Record Immutability & Value Equality ---");
+
 var enrollment = new EnrollmentRecord("STU-001", "CS-401", DateTime.UtcNow); 
 Console.WriteLine(enrollment);
 
-// Try to mutate it — uncomment this line and see the compiler error:
-// enrollment.CourseCode = "HACKED"; // ERROR: init-only property
-
-// Non-destructive copy — creates a NEW record with one field changed
 var corrected = enrollment with { CourseCode = "CS-402" }; 
 Console.WriteLine(corrected);
 // Value equality — two records with the same data are equal
