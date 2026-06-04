@@ -1,35 +1,13 @@
-public class EnrollmentService 
+// Legacy implementation — what the logging service did to the data
+public class Enrollment
 {
-    public EnrollmentRecord ProcessRegistration(Student? student, Course? course) 
-    {
-        // TODO 1: Guard clauses (fail fast)
-        if (student is null) 
-        {
-            throw new ArgumentNullException(nameof(student));
-        }
-
-        if (course is null) 
-        {
-            throw new ArgumentNullException(nameof(course));
-        }
-
-        if (course.Capacity <= 0) 
-        {
-            throw new InvalidOperationException("Course is full or invalid capacity.");
-        }
-
-        // TODO 2: Switch expression for academic standing
-        string standing = student.GPA switch 
-        {
-          //  >= 3.5f => "Honors", // Assumes GPA is a float or double
-          //  >= 2.5f => "Good Standing",
-            _       => "Academic Warning"
-        };
-
-        Console.WriteLine($"{student.Name} is in {standing}.");
-
-        // TODO 3: Return a new EnrollmentRecord
-        return new EnrollmentRecord(student.Id, course.Code, DateTime.UtcNow);
-    }
+public string StudentId { get; set; } = string.Empty; 
+public string CourseCode { get; set; } = string.Empty; 
+public DateTime ProcessedAt { get; set; }
 }
+// Immutable by design — the logging pipeline cannot corrupt this
+public record EnrollmentRecord(string StudentId, string CourseCode, DateTime EnrolledAt);
+
+
+
 
