@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
+
 
 
 // Console.WriteLine("Hello, World!");
@@ -41,5 +43,19 @@ Console.WriteLine($"Campus: {campusRegion ?? "Not assigned"}");
 // Legacy implementation — the bug that caused the audit failure
 double grantPerStudent = 1999.99;
 double totalAllocation = grantPerStudent * 100_000;
+
  Console.WriteLine($"Total allocated (double): {totalAllocation}");
+ 
+// Fixed implementation — exact financial math
+//decimal grantPerStudent = 1999.99m;
+//decimal totalAllocation =  1999.99m * 100_000m;
+
+Console.WriteLine($"Total allocated (decimal): {totalAllocation}");
+Console.WriteLine($"Total allocated (formatted): {totalAllocation:F2}");
+
+
+
+
+
+
 
