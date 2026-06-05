@@ -111,3 +111,23 @@ Console.WriteLine($"Student: {s.Name}, GPA: {s.GPA}");
 // new Student { Id = "S3", Name = "Test", Age = 12, GPA = 3.0m };
 
 // new Student { Id = "S4", Name = "Test", Age = 20, GPA = 5.0m };
+
+// EXERCISE 3B: POLYMORPHIC INTERFACE TESTING
+ Console.WriteLine("\n ============================================================================");
+ Console.WriteLine(" Exercise 3B: Polymorphic Grade Report");
+ Console.WriteLine(" ============================================================================");
+
+void PrintGradeReport(IEnumerable<IGradable> assessments)
+{
+Console.WriteLine("--- Grade Report ---");
+foreach (var item in assessments)
+{
+Console.WriteLine($"{item.Title}: {item.CalculateGrade():F2}%");
+}
+}
+IGradable[] cohortAssessments = [
+new Quiz { Title = "C# Basics", CorrectAnswers = 18, TotalQuestions = 20 },
+new LabAssignment { Title = "Registration API", FunctionalityScore = 90m, CodeQualityScore = 85m }
+];
+
+PrintGradeReport(cohortAssessments);
