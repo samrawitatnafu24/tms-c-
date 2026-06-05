@@ -70,9 +70,31 @@ Console.WriteLine(enrollment);
 
 var corrected = enrollment with { CourseCode = "CS-402" }; 
 Console.WriteLine(corrected);
-// Value equality — two records with the same data are equal
+
 var duplicate = new EnrollmentRecord("STU-001", "CS-401", enrollment.EnrolledAt); 
 Console.WriteLine($"Same data? {enrollment == duplicate}"); // True
 
 
+// EXERCISE 3 Part 2
+Console.WriteLine("\n--- Exercise 3 - Part 2: Course Capacity & Title Field Validation ---");
 
+var course = new CourseCode {Code = "CS-401", Title = "Advanced C#", Capacity = 30};
+Console.WriteLine($"Course: {course.Title} (Capacity: {course.Capacity})");
+
+try
+{
+    course.Capacity = -5;
+}
+catch(ArgumentOutOfRangeException ex)
+{
+    Console.WriteLine($"Caught: {ex.Message}");
+}
+
+try
+{
+    course.Title = "";
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine($"Caught: {ex.Message}");
+}
