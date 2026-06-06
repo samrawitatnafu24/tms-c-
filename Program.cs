@@ -230,3 +230,36 @@ string[] frontendCourses = ["TypeScript", "Angular"];
 string[] allCourses = [.. backendCourses, .. frontendCourses, "Capstone"]; 
 
 Console.WriteLine($"\nFull curriculum: {string.Join(", ", allCourses)}");
+
+
+// EXERCISE 6 - Async and Resilience
+Console.WriteLine("\n=====================================================================");
+Console.WriteLine("Exercise 6: Async Programming & Resilience");
+Console.WriteLine("=====================================================================");
+
+// EXERCISE 6 - STEP 1: SEE THREAD STARVATION IN NUMBERS
+Console.WriteLine("--- Exercise 6 Step 1: Thread Pool Latency Numbers ---");
+
+var enrollService = new EnrollmentService();
+var sw = Stopwatch.StartNew();
+
+// 1. The Wrong Way: Blocking Sequential
+for (int i = 0; i < 5; i++)
+{
+    Thread.Sleep(300); 
+}
+Console.WriteLine($"Blocking sequential: {sw.ElapsedMilliseconds}ms");
+
+// 2. Async But Still Sequential
+sw.Restart();
+for (int i = 0; i < 5; i++)
+{
+    await Task.Delay(300);
+}
+Console.WriteLine($"Async sequential:    {sw.ElapsedMilliseconds}ms");
+
+// 3. The Right Way: Async Parallel
+sw.Restart();
+var tasks = Enumerable.Range(0, 5).Select(_ => Task.Delay(300));
+await Task.WhenAll(tasks);
+Console.WriteLine($"Async parallel:      {sw.ElapsedMilliseconds}ms");
