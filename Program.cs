@@ -263,3 +263,37 @@ sw.Restart();
 var tasks = Enumerable.Range(0, 5).Select(_ => Task.Delay(300));
 await Task.WhenAll(tasks);
 Console.WriteLine($"Async parallel:      {sw.ElapsedMilliseconds}ms");
+
+
+// EXERCISE 6 - STEP 3 & PART B: CONCURRENT FETCHING AND ENROLLMENT LOOP
+Console.WriteLine("\n--- Exercise 6 Step 3: Fetching Data in Parallel ---");
+sw.Restart();
+
+// Start all fetches simultaneously students AND courses
+string[] studentIds = ["S1", "S2", "S3", "S4", "S5"];
+string[] courseCodes = ["CRS-101", "CRS-201", "CRS-301"];
+
+async Task<Student> FetchStudentAsync(string id)
+{
+    await Task.Delay(100); // Simulate async operation
+    return new Student { Id = id, Name = $"Student-{id}", Age = 20, GPA = 3.5m };
+}
+
+async Task<CourseCode> FetchCourseAsync(string code)
+{
+    await Task.Delay(100); // Simulate async operation
+    return new CourseCode { Code = code, Title = $"Course-{code}", Capacity = 30 };
+}
+
+var studentTasks = studentIds.Select(id => FetchStudentAsync(id));
+var courseTasks = courseCodes.Select(code => FetchCourseAsync(code));
+
+// Both arrays load concurrently
+Student[] enrolledStudents = await Task.WhenAll(studentTasks);
+var courses = await Task.WhenAll(courseTasks);
+
+Console.WriteLine($"\nLoaded {enrolledStudents.Length} students and {courses.Length} courses in {sw.ElapsedMilliseconds}ms");
+foreach (var student in enrolledStudents)
+{
+    Console.WriteLine($" {student.Name} GPA: {student.GPA}");
+}
