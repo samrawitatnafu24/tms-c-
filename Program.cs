@@ -324,12 +324,6 @@ Console.WriteLine($" Rejected: {student.Name} {ex.Message}");
 }
 }
 
-// Briefly await to allow background fire-and-forget tasks to print to the stream output
-await Task.Delay(150);
-
-Console.WriteLine($"\nProcessed {enrollments.Count} enrollments with {failures.Count} failures in {sw.ElapsedMilliseconds}ms");
-
-
 // EXERCISE 7: CATCHING CUSTOM DOMAIN FAULTS
 Console.WriteLine("\n=====================================================================");
 Console.WriteLine("Exercise 7: Targeted Domain Exception Handling");
@@ -337,7 +331,7 @@ Console.WriteLine("=============================================================
 
 try
 {
-var overflowCourse = new CourseCode { Code = "CRS-999", Title = "Overflow Test", Capacity = 30 }; 
+var overflowCourse = new CourseCode { Code = "CRS-999", Title = "Overflow Test", Capacity = 30}; 
 enrollService.ProcessRegistration(
 new Student { Id = "S99", Name = "Test", Age = 20, GPA = 3.0m }, overflowCourse
 );
@@ -348,3 +342,35 @@ Console.WriteLine($"\nDomain exception caught:");
  Console.WriteLine($" Course: {ex.CourseCode}");
   Console.WriteLine($" Message: {ex.Message}");
 }
+
+// ----------------------------------------------------------------------------
+// EXERCISE 7B: THE INTEGRATION SUMMARY SUMMARY REPORT
+// ----------------------------------------------------------------------------
+
+// Stop the timer
+sw.Stop();
+ 
+// Calculate class average GPA from loaded students
+decimal classAverage = students.Count > 0
+? students.Average(s => s.GPA)
+: 0m;
+
+// Print the final report
+Console.WriteLine("\n========== ENROLLMENT SUMMARY ==========");
+Console.WriteLine($"Total students loaded:		{students.Count}"); 
+Console.WriteLine($"Successful enrollments:			{enrollments.Count}"); 
+Console.WriteLine($"Failed enrollments:	 {failures.Count}"); 
+Console.WriteLine($"Class average GPA:	 {classAverage:F2}"); 
+Console.WriteLine($"Total elapsed time:	{sw.ElapsedMilliseconds}ms");
+
+
+if (failures.Count > 0)
+{
+Console.WriteLine("\n--- Failure Details ---");
+foreach (var failure in failures)
+{
+Console.WriteLine($" {failure}");
+}
+}
+
+Console.WriteLine("========================================");
