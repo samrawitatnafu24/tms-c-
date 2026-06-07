@@ -324,6 +324,7 @@ Console.WriteLine($" Rejected: {student.Name} {ex.Message}");
 }
 }
 
+
 // EXERCISE 7: CATCHING CUSTOM DOMAIN FAULTS
 Console.WriteLine("\n=====================================================================");
 Console.WriteLine("Exercise 7: Targeted Domain Exception Handling");
@@ -374,3 +375,5 @@ Console.WriteLine($" {failure}");
 }
 
 Console.WriteLine("========================================");
+
+

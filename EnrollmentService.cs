@@ -14,6 +14,9 @@ public record EnrollmentRecord(string StudentId, string CourseCode, DateTime Enr
 
 public class EnrollmentService
 {
+   // TODO 1: Define a delegate that accepts a Student object (or use Action<Student>)
+   public Action<Student>? Listener { get; set; }
+
    public EnrollmentRecord ProcessRegistration(Student? student, CourseCode? course)
     {
         // TODO 1: Guard clauses - Fail fast [cite: 324]
@@ -55,4 +58,17 @@ catch (Exception ex)
 Console.WriteLine($" Email failed for {student.Name}: {ex.Message}");
 }
 }
+
+public void FinalizeEnrollment(Student s)
+{
+Console.WriteLine("Persisting to database...");
+
+// TODO 3: Check if the delegate listener is 'not null'
+//	and invoke it with the student object.
+Listener?.Invoke(s);
 }
+}
+
+// TODO 4: In Program.cs, create a lambda function that prints:
+//	"SMS SENT: Welcome to the TMS, [StudentName]!"
+// TODO 5: Attach that lambda to the EnrollmentService and call FinalizeEnrollment.
