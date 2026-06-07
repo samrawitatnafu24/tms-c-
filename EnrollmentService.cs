@@ -40,4 +40,20 @@ public class EnrollmentService
         // TODO 3: Return immutable checkpoint tracking instance [cite: 342]
         return new EnrollmentRecord(student.Id, course.Code, DateTime.UtcNow); 
     }
+
+
+public async Task SendConfirmationAsync(Student student)
+{
+try
+{
+await Task.Delay(100); // Simulate sending email
+Console.WriteLine($" Email sent to {student.Name}");
+}
+catch (Exception ex)
+{
+// Log the failure do NOT re-throw.
+// This is intentional fire-and-forget.
+Console.WriteLine($" Email failed for {student.Name}: {ex.Message}");
+}
+}
 }
