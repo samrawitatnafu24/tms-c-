@@ -230,3 +230,150 @@ string[] frontendCourses = ["TypeScript", "Angular"];
 string[] allCourses = [.. backendCourses, .. frontendCourses, "Capstone"]; 
 
 Console.WriteLine($"\nFull curriculum: {string.Join(", ", allCourses)}");
+
+
+// EXERCISE 6 - Async and Resilience
+Console.WriteLine("\n=====================================================================");
+Console.WriteLine("Exercise 6: Async Programming & Resilience");
+Console.WriteLine("=====================================================================");
+
+// EXERCISE 6 - STEP 1: SEE THREAD STARVATION IN NUMBERS
+Console.WriteLine("--- Exercise 6 Step 1: Thread Pool Latency Numbers ---");
+
+var enrollService = new EnrollmentService();
+var sw = Stopwatch.StartNew();
+
+// 1. The Wrong Way: Blocking Sequential
+for (int i = 0; i < 5; i++)
+{
+    Thread.Sleep(300); 
+}
+Console.WriteLine($"Blocking sequential: {sw.ElapsedMilliseconds}ms");
+
+// 2. Async But Still Sequential
+sw.Restart();
+for (int i = 0; i < 5; i++)
+{
+    await Task.Delay(300);
+}
+Console.WriteLine($"Async sequential:    {sw.ElapsedMilliseconds}ms");
+
+// 3. The Right Way: Async Parallel
+sw.Restart();
+var tasks = Enumerable.Range(0, 5).Select(_ => Task.Delay(300));
+await Task.WhenAll(tasks);
+Console.WriteLine($"Async parallel:      {sw.ElapsedMilliseconds}ms");
+
+
+// EXERCISE 6 - STEP 3 & PART B: CONCURRENT FETCHING AND ENROLLMENT LOOP
+Console.WriteLine("\n--- Exercise 6 Step 3: Fetching Data in Parallel ---");
+sw.Restart();
+
+// Start all fetches simultaneously students AND courses
+string[] studentIds = ["S1", "S2", "S3", "S4", "S5"];
+string[] courseCodes = ["CRS-101", "CRS-201", "CRS-301"];
+
+async Task<Student> FetchStudentAsync(string id)
+{
+    await Task.Delay(100); // Simulate async operation
+    return new Student { Id = id, Name = $"Student-{id}", Age = 20, GPA = 3.5m };
+}
+
+async Task<CourseCode> FetchCourseAsync(string code)
+{
+    await Task.Delay(100); // Simulate async operation
+    return new CourseCode { Code = code, Title = $"Course-{code}", Capacity = 30 };
+}
+
+var studentTasks = studentIds.Select(id => FetchStudentAsync(id));
+var courseTasks = courseCodes.Select(code => FetchCourseAsync(code));
+
+// Both arrays load concurrently
+Student[] enrolledStudents = await Task.WhenAll(studentTasks);
+var courses = await Task.WhenAll(courseTasks);
+
+Console.WriteLine($"\nLoaded {enrolledStudents.Length} students and {courses.Length} courses in {sw.ElapsedMilliseconds}ms");
+foreach (var student in enrolledStudents)
+{
+    Console.WriteLine($" {student.Name} GPA: {student.GPA}");
+}
+
+
+// EXERCISE 6 PART B & 6B: The TMS Enrollment Engine
+Console.WriteLine("\n--- Exercise 6 Part B & 6B: Exercise 6 Part B: The TMS Enrollment Engine---");
+var enrollCourse = new CourseCode { Code = "CRS-101", Title = "C# Mastery", Capacity = 2 };
+var enrollments = new List<TmsCore.EnrollmentRecord>();
+var failures = new List<string>();
+
+
+sw.Restart();
+
+foreach (var student in students)
+{
+try
+{
+var record = enrollService.ProcessRegistration(student, enrollCourse); 
+enrollCourse.EnrolledCount++;
+enrollments.Add(record);
+Console.WriteLine($" Enrolled: {student.Name}");
+}
+catch (InvalidOperationException ex)
+{
+failures.Add($"{student.Name}: {ex.Message}"); 
+Console.WriteLine($" Rejected: {student.Name} {ex.Message}");
+}
+}
+
+
+// EXERCISE 7: CATCHING CUSTOM DOMAIN FAULTS
+Console.WriteLine("\n=====================================================================");
+Console.WriteLine("Exercise 7: Targeted Domain Exception Handling");
+Console.WriteLine("=====================================================================");
+
+try
+{
+var overflowCourse = new CourseCode { Code = "CRS-999", Title = "Overflow Test", Capacity = 30}; 
+enrollService.ProcessRegistration(
+new Student { Id = "S99", Name = "Test", Age = 20, GPA = 3.0m }, overflowCourse
+);
+}
+catch (CapacityReachedException ex)
+{
+Console.WriteLine($"\nDomain exception caught:");
+ Console.WriteLine($" Course: {ex.CourseCode}");
+  Console.WriteLine($" Message: {ex.Message}");
+}
+
+// ----------------------------------------------------------------------------
+// EXERCISE 7B: THE INTEGRATION SUMMARY SUMMARY REPORT
+// ----------------------------------------------------------------------------
+
+// Stop the timer
+sw.Stop();
+ 
+// Calculate class average GPA from loaded students
+decimal classAverage = students.Count > 0
+? students.Average(s => s.GPA)
+: 0m;
+
+// Print the final report
+Console.WriteLine("\n========== ENROLLMENT SUMMARY ==========");
+Console.WriteLine($"Total students loaded:		{students.Count}"); 
+Console.WriteLine($"Successful enrollments:			{enrollments.Count}"); 
+Console.WriteLine($"Failed enrollments:	 {failures.Count}"); 
+Console.WriteLine($"Class average GPA:	 {classAverage:F2}"); 
+Console.WriteLine($"Total elapsed time:	{sw.ElapsedMilliseconds}ms");
+
+
+if (failures.Count > 0)
+{
+Console.WriteLine("\n--- Failure Details ---");
+foreach (var failure in failures)
+{
+Console.WriteLine($" {failure}");
+}
+}
+
+Console.WriteLine("========================================");
+
+

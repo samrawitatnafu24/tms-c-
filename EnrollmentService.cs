@@ -14,6 +14,9 @@ public record EnrollmentRecord(string StudentId, string CourseCode, DateTime Enr
 
 public class EnrollmentService
 {
+   // TODO 1: Define a delegate that accepts a Student object (or use Action<Student>)
+   public Action<Student>? Listener { get; set; }
+
    public EnrollmentRecord ProcessRegistration(Student? student, CourseCode? course)
     {
         // TODO 1: Guard clauses - Fail fast [cite: 324]
@@ -40,4 +43,32 @@ public class EnrollmentService
         // TODO 3: Return immutable checkpoint tracking instance [cite: 342]
         return new EnrollmentRecord(student.Id, course.Code, DateTime.UtcNow); 
     }
+
+public async Task SendConfirmationAsync(Student student)
+{
+try
+{
+await Task.Delay(100); // Simulate sending email
+Console.WriteLine($" Email sent to {student.Name}");
 }
+catch (Exception ex)
+{
+// Log the failure do NOT re-throw.
+// This is intentional fire-and-forget.
+Console.WriteLine($" Email failed for {student.Name}: {ex.Message}");
+}
+}
+
+public void FinalizeEnrollment(Student s)
+{
+Console.WriteLine("Persisting to database...");
+
+// TODO 3: Check if the delegate listener is 'not null'
+//	and invoke it with the student object.
+Listener?.Invoke(s);
+}
+}
+
+// TODO 4: In Program.cs, create a lambda function that prints:
+//	"SMS SENT: Welcome to the TMS, [StudentName]!"
+// TODO 5: Attach that lambda to the EnrollmentService and call FinalizeEnrollment.
