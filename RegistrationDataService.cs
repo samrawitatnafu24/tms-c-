@@ -8,7 +8,7 @@ public class RegistrationDataService
     public async Task<Student> FetchStudentAsync(string id)
     {
         Console.WriteLine($"  Fetching {id}...");
-        await Task.Delay(300); // Simulate database network latency [cite: 58]
+        await Task.Delay(300); 
         
         return new Student
         {
@@ -44,5 +44,22 @@ public class RegistrationDataService
                 _         => 25
             }
         };
+    }
+
+
+// EXERCISE 6B: SAFE FIRE-AND-FORGET PATTERN
+    public async Task SendConfirmationAsync(Student student)
+    {
+        try
+        {
+            await Task.Delay(100); // Simulate sending network email latency
+            Console.WriteLine($"  [Background notification] Email sent to {student.Name}");
+        }
+        catch (Exception ex)
+        {
+            // Log the failure securely but do NOT re-throw it.
+            // This isolates background context from crashing the active HTTP registration runner thread.
+            Console.WriteLine($"  [Background notification ERROR] Email failed for {student.Name}: {ex.Message}");
+        }
     }
 }
